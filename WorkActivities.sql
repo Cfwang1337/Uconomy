@@ -60,7 +60,7 @@ preprocess AS
 SELECT
 activity_level.onetsoc_code,
 activity_level.element_name,
-activity_level.data_value_normalized * activity_importance.data_value_normalized AS product_normalized
+(activity_level.data_value_normalized + activity_importance.data_value_normalized)/2 AS product_normalized
 FROM activity_level
 LEFT JOIN activity_importance on activity_importance.onetsoc_code = activity_level.onetsoc_code
 AND activity_importance.element_name = activity_level.element_name)
@@ -74,63 +74,63 @@ preprocess
 ORDER BY 1,2')
 AS pivoted(
 onetsoc_code CHARACTER(10),
+"Information Input - Estimating the Quantifiable Characteristics of Products, Events, or Information" NUMERIC ,
 "Information Input - Getting Information" NUMERIC,
-"Information Input - Monitor Processes, Materials, or Surroundings" NUMERIC ,
 "Information Input - Identifying Objects, Actions, and Events" NUMERIC ,
 "Information Input - Inspecting Equipment, Structures, or Material" NUMERIC ,
-"Information Input - Estimating the Quantifiable Characteristics of Products, Events, or Information" NUMERIC ,
-"Mental Processes - Judging the Qualities of Things, Services, or People" NUMERIC ,
-"Mental Processes - Processing Information" NUMERIC ,
-"Mental Processes - Evaluating Information to Determine Compliance with Standards" NUMERIC ,
-"Mental Processes - Analyzing Data or Information" NUMERIC ,
-"Mental Processes - Making Decisions and Solving Problems" NUMERIC ,
-"Mental Processes - Thinking Creatively" NUMERIC ,
-"Mental Processes - Updating and Using Relevant Knowledge" NUMERIC ,
-"Mental Processes - Developing Objectives and Strategies" NUMERIC ,
-"Mental Processes - Scheduling Work and Activities" NUMERIC ,
-"Mental Processes - Organizing, Planning, and Prioritizing Work" NUMERIC ,
-"Work Output - Performing General Physical Activities" NUMERIC ,
-"Work Output - Handling and Moving Objects" NUMERIC ,
-"Work Output - Controlling Machines and Processes" NUMERIC ,
-"Work Output - Operating Vehicles, Mechanized Devices, or Equipment" NUMERIC ,
-"Work Output - Interacting With Computers" NUMERIC ,
-"Work Output - Drafting, Laying Out, and Specifying Technical Devices, Parts, and Equipment" NUMERIC ,
-"Work Output - Repairing and Maintaining Mechanical Equipment" NUMERIC ,
-"Work Output - Repairing and Maintaining Electronic Equipment" NUMERIC ,
-"Work Output - Documenting/Recording Information" NUMERIC ,
-"Interacting With Others - Interpreting the Meaning of Information for Others" NUMERIC ,
-"Interacting With Others - Communicating with Supervisors, Peers, or Subordinates" NUMERIC ,
-"Interacting With Others - Communicating with Persons Outside Organization" NUMERIC ,
-"Interacting With Others - Establishing and Maintaining Interpersonal Relationships" NUMERIC ,
+"Information Input - Monitor Processes, Materials, or Surroundings" NUMERIC ,
 "Interacting With Others - Assisting and Caring for Others" NUMERIC ,
-"Interacting With Others - Selling or Influencing Others" NUMERIC ,
-"Interacting With Others - Resolving Conflicts and Negotiating with Others" NUMERIC ,
-"Interacting With Others - Performing for or Working Directly with the Public" NUMERIC ,
+"Interacting With Others - Coaching and Developing Others" NUMERIC ,
+"Interacting With Others - Communicating with Persons Outside Organization" NUMERIC ,
+"Interacting With Others - Communicating with Supervisors, Peers, or Subordinates" NUMERIC ,
 "Interacting With Others - Coordinating the Work and Activities of Others" NUMERIC ,
 "Interacting With Others - Developing and Building Teams" NUMERIC ,
-"Interacting With Others - Training and Teaching Others" NUMERIC ,
+"Interacting With Others - Establishing and Maintaining Interpersonal Relationships" NUMERIC ,
 "Interacting With Others - Guiding, Directing, and Motivating Subordinates" NUMERIC ,
-"Interacting With Others - Coaching and Developing Others" NUMERIC ,
-"Interacting With Others - Provide Consultation and Advice to Others" NUMERIC ,
+"Interacting With Others - Interpreting the Meaning of Information for Others" NUMERIC ,
+"Interacting With Others - Monitoring and Controlling Resources" NUMERIC ,
 "Interacting With Others - Performing Administrative Activities" NUMERIC ,
+"Interacting With Others - Performing for or Working Directly with the Public" NUMERIC ,
+"Interacting With Others - Provide Consultation and Advice to Others" NUMERIC ,
+"Interacting With Others - Resolving Conflicts and Negotiating with Others" NUMERIC ,
+"Interacting With Others - Selling or Influencing Others" NUMERIC ,
 "Interacting With Others - Staffing Organizational Units" NUMERIC ,
-"Interacting With Others - Monitoring and Controlling Resources" NUMERIC)),
+"Interacting With Others - Training and Teaching Others" NUMERIC ,
+"Mental Processes - Analyzing Data or Information" NUMERIC ,
+"Mental Processes - Developing Objectives and Strategies" NUMERIC ,
+"Mental Processes - Evaluating Information to Determine Compliance with Standards" NUMERIC ,
+"Mental Processes - Judging the Qualities of Things, Services, or People" NUMERIC ,
+"Mental Processes - Making Decisions and Solving Problems" NUMERIC ,
+"Mental Processes - Organizing, Planning, and Prioritizing Work" NUMERIC ,
+"Mental Processes - Processing Information" NUMERIC ,
+"Mental Processes - Scheduling Work and Activities" NUMERIC ,
+"Mental Processes - Thinking Creatively" NUMERIC ,
+"Mental Processes - Updating and Using Relevant Knowledge" NUMERIC ,
+"Work Output - Controlling Machines and Processes" NUMERIC ,
+"Work Output - Documenting/Recording Information" NUMERIC ,
+"Work Output - Drafting, Laying Out, and Specifying Technical Devices, Parts, and Equipment" NUMERIC ,
+"Work Output - Handling and Moving Objects" NUMERIC ,
+"Work Output - Interacting With Computers" NUMERIC ,
+"Work Output - Operating Vehicles, Mechanized Devices, or Equipment" NUMERIC ,
+"Work Output - Performing General Physical Activities" NUMERIC ,
+"Work Output - Repairing and Maintaining Electronic Equipment" NUMERIC ,
+"Work Output - Repairing and Maintaining Mechanical Equipment" NUMERIC)),
     
 work_activities AS
 (SELECT
 onetsoc_code,
-CASE WHEN (
+(
 "Work Output - Performing General Physical Activities" +
 "Work Output - Handling and Moving Objects"
-)/2 >=.3 THEN 1 ELSE 0 END AS physically_demanding,
+)/2 AS physically_demanding,
 
-CASE WHEN (
+(
 "Information Input - Monitor Processes, Materials, or Surroundings" +
 "Information Input - Identifying Objects, Actions, and Events" +
 "Information Input - Inspecting Equipment, Structures, or Material"
-)/3 >=.3 THEN 1 ELSE 0 END AS sensorily_demanding,
+)/3 AS sensorily_demanding,
 
-CASE WHEN (
+(
 "Information Input - Getting Information" +
 "Information Input - Monitor Processes, Materials, or Surroundings" +
 "Mental Processes - Judging the Qualities of Things, Services, or People" +
@@ -140,27 +140,27 @@ CASE WHEN (
 "Mental Processes - Thinking Creatively" +
 "Mental Processes - Updating and Using Relevant Knowledge" +
 "Mental Processes - Developing Objectives and Strategies"
-)/9 >=.3 THEN 1 ELSE 0 END AS intellectually_demanding_problem_solving,
+)/9 AS intellectually_demanding_problem_solving,
 
 
-CASE WHEN "Mental Processes - Thinking Creatively"
->=.3 THEN 1 ELSE 0 END AS intellectually_demanding_creativity,
+"Mental Processes - Thinking Creatively"
+AS intellectually_demanding_creativity,
 
-CASE WHEN "Interacting With Others - Assisting and Caring for Others"
->=.3 THEN 1 ELSE 0 END AS people_caring,
+"Interacting With Others - Assisting and Caring for Others"
+AS people_caring,
 
-CASE WHEN (
+(
 "Interacting With Others - Training and Teaching Others" +
 "Interacting With Others - Coaching and Developing Others")
-/2 >=.3 THEN 1 ELSE 0 END AS people_teaching_and_instructing,
+/2 AS people_teaching_and_instructing,
 
-CASE WHEN (
+(
 "Interacting With Others - Performing for or Working Directly with the Public" +
 "Interacting With Others - Selling or Influencing Others" +
 "Interacting With Others - Communicating with Persons Outside Organization"
-)/3 >=.3 THEN 1 ELSE 0 END AS people_persuading,
+)/3 AS people_persuading,
 
-CASE WHEN (
+(
 "Mental Processes - Judging the Qualities of Things, Services, or People" +
 "Mental Processes - Developing Objectives and Strategies" +
 "Mental Processes - Scheduling Work and Activities" +
@@ -171,24 +171,24 @@ CASE WHEN (
 "Interacting With Others - Resolving Conflicts and Negotiating with Others" +
 "Interacting With Others - Coordinating the Work and Activities of Others" +
 "Interacting With Others - Developing and Building Teams"
-)/10 >= .3 THEN 1 ELSE 0 END AS people_leading,
+)/10 AS people_leading,
 
-CASE WHEN (
+(
 "Information Input - Inspecting Equipment, Structures, or Material" +
 "Work Output - Controlling Machines and Processes" +
 "Work Output - Operating Vehicles, Mechanized Devices, or Equipment"
-)/3 >=.3 THEN 1 ELSE 0 END AS things_machines_operate,
+)/3 AS things_machines_operate,
 
-CASE WHEN (
+(
 "Work Output - Repairing and Maintaining Mechanical Equipment" +
 "Work Output - Repairing and Maintaining Electronic Equipment"
-)/2 >=.3 THEN 1 ELSE 0 END AS things_machines_maintain,
+)/2 AS things_machines_maintain,
 
-CASE WHEN "Work Output - Interacting With Computers"
->=.3 THEN 1 ELSE 0 END AS things_computers,
+"Work Output - Interacting With Computers"
+AS things_computers,
 
-CASE WHEN "Work Output - Operating Vehicles, Mechanized Devices, or Equipment"
->=.3 THEN 1 ELSE 0 END AS things_vehicles_heavy_machinery
+"Work Output - Operating Vehicles, Mechanized Devices, or Equipment"
+AS things_vehicles_heavy_machinery
 
 FROM
 pivoted)    
