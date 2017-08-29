@@ -194,9 +194,9 @@ FROM
 pivoted)    
  
 SELECT
-  occupation_data.onetsoc_code
-    ,occupation_data.title
-    ,description
+   occupation_data.onetsoc_code
+  ,occupation_data.title
+  ,description
   ,physically_demanding
   ,sensorily_demanding
   ,intellectually_demanding_problem_solving
