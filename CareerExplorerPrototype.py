@@ -1,51 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 from datetime import datetime
+from questions.questions import START_TIME, INPUT_TEXT, WORK_ACTIVITIES_QUESTIONS, INTERESTS_QUESTIONS
 import pandas as pd
 import psycopg2
-
-
-START_TIME = datetime.now().time().isoformat()
-
-
-INPUT_TEXT = """
-Find occupational recommendations based on the following:
-0. Activities I Like
-1. My Interests
-2. My Skills, Knowledge, and Ability
-3. My Personality and Behavior
-4. Risks and Dangers I'm Willing To Accept
-5. My Degree
-6. My County, City, State, or Region
-
-"Q" to tabulate results and exit
-"""
-
-#TODO STORE QUESTIONS ELSEWHERE
-WORK_ACTIVITIES_QUESTIONS = [
-    "I want to do something physically demanding",
-    "I want to do something that requires keen senses and observation",
-    "I want to solve problems",
-    "I want to do something artistic or creative",
-    "I want to heal and care for people",
-    "I want to teach and mentor people",
-    "I want to persuade people",
-    "I want to lead people",
-    "I want to use machines",
-    "I want to fix and maintain machines",
-    "I want to work with computers",
-    "I want to operate heavy machinery and vehicles",
-]
-
-
-INTERESTS_QUESTIONS = [
-    "I am very realistic and interested in tangible, concrete things",
-    "I am very curious and interested in solving puzzles",
-    "I am very artistic and interested in creative, expressive pursuits",
-    "I am very nurturing and interested in helping people",
-    "I am very enterprising and interested in leading projects",
-    "I am very conscientious and interested in keeping things stable and orderly"
-]
 
 
 def connect_with_onet():
@@ -97,70 +55,79 @@ def scoring(query, questions):
 
         all_occupation_rankings.append([occupation[0], occupation[1], ranking])
 
-    all_occupation_rankings = sorted(all_occupation_rankings, key=lambda x: x[-1], reverse=True)
     return all_occupation_rankings
 
 
 def make_choice():
     choice = raw_input(INPUT_TEXT)
-    quitter(choice)
-    while int(choice) not in range(0, 7):
+
+    while choice.lower() != "q" and choice not in [str(x) for x in range(0, 7)]:
         print "Please enter a valid choice"
         choice = raw_input(INPUT_TEXT)
-        # quitter(choice)
     return choice
 
 
 def quitter(choice):
-    if choice == "Q" or choice == "q":
+    if choice.lower() == "q":
         print("QUITTING AND TABULATING RESULTS")
         print "Start time: {0} ".format(START_TIME)
         print "End time: {0}".format(datetime.now().time().isoformat())
         exit()
 
 
-#TODO NEED TO MODULARIZE WITH A MASTER MODULE, TO IMPORT PACKAGES
+def make_or_append_df(reference_df, results, column_name):
+    if reference_df.empty:
+        reference_df = pd.DataFrame(results, columns=["onet_score", "title", "{0}Score".format(column_name)])
+    else:
+        results_temp = pd.DataFrame(results, columns=["onet_score", "title", "{0}Score".format(column_name)])
+        reference_df = reference_df.merge(results_temp, how="outer", on=["onet_score", "title"])
+    return reference_df
+
+
 #TODO NEED TO REFACTOR SQL TO MAKE QUESTIONS MORE GRANULAR
 #TODO NEED TO ACQUIRE OES AND COMPENSATION DATA
 #TODO NEED CENSUS DATA SHOWING CROSSWALK OF MAJORS AND OCCUPATIONS
 def main():
 
-    full_results = []
-
     results_df = pd.DataFrame(columns=["onet_score", "title", "rank_score"])
-
-    if results_df.empty:
-        print "empty"
 
     choices_made = []
     choice = make_choice()
     while str(choice).lower() != "q" and choice not in choices_made:
         if choice == "0":
             results = scoring("WorkActivities", WORK_ACTIVITIES_QUESTIONS)
+            results_df = make_or_append_df(results_df, results, "WorkActivities")
+
+            choices_made.append(choice)
+            choice = make_choice()
+
         elif choice == "1":
             results = scoring("Interests", INTERESTS_QUESTIONS)
-        else:
-            choice == "q"
-        #TODO COMBINATION LOGIC TO BE REPRESENTED HERE
-        if results_df.empty:
-            results_df.empty = pd.DataFrame(results, columns=["onet_score", "title", "rank_score"])
-        else:
-            results_temp = pd.DataFrame(results, columns=["onet_score", "title", "rank_score"])
-            results_df.empty = pd.results_df.merge(results_temp, how="outer")
+            results_df = make_or_append_df(results_df, results, "Interests")
 
-        # full_results.append(results)
-        choices_made.append(choice)
-        choice = make_choice()
+            choices_made.append(choice)
+            choice = make_choice()
 
-    #TODO COMBINATION LOGIC
-    full_results = list(results_df.values.values)
-    for sub_result in full_results:
-        for result in sub_result[:25]:
-            print result
+        else:
+            choice = make_choice()
+
+    if not results_df.empty:
+        result_columns = results_df.columns.values
+        result_columns = [item for item in result_columns if "Score" in item]
+
+        #TODO SUGGEST ALLOWING WEIGHTING AND OTHER WAYS TO TWEAK ANSWERS
+        results_df['rank_score'] = 0
+
+        for column in result_columns:
+            results_df['rank_score'] = results_df['rank_score'] + results_df[column]
+
+        full_results = results_df.sort_values(['rank_score'], ascending=0)
+
+        print full_results[:25]
+
+        full_results.to_csv("results/{0}.csv".format(datetime.now().isoformat()))
+
     quitter("q")
-
-    #TODO NEED TO BE ABLE TO MERGE RESULTS FROM MULTIPLE MODELS
-    #TODO NEED MECHANISM FOR RETURNING/PERSISTING
 
 
 if __name__ == "__main__":
