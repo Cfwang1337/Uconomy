@@ -14,4 +14,4 @@ This project is intended to ultimately be an aid to:
 
 A rough sketch of a front end:
 
-[Specs](/UnderstandingIndustryAndLabor_ProposedFrontend.png)
+![Specs](/UnderstandingIndustryAndLabor_ProposedFrontend.png)
