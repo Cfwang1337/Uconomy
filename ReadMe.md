@@ -12,6 +12,6 @@ This project is intended to ultimately be an aid to:
 3. Guidance and career counselors
 4. Job seekers
 
-A rough sketch of a front end:
+A rough sketch of the planned front end:
 
 ![Specs](/UnderstandingIndustryAndLabor_ProposedFrontend.png)
