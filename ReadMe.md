@@ -11,3 +11,7 @@ This project is intended to ultimately be an aid to:
 2. Parents of students
 3. Guidance and career counselors
 4. Job seekers
+
+A rough sketch of a front end:
+
+(UnderstandingIndustryAndLabor_ProposedFrontend.png)
