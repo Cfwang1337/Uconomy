@@ -12,5 +12,7 @@ def open_query(query):
     with open("queries/{0}.sql".format(query), 'rb') as query:
         cur = connect_with_onet()
         cur.execute(query.read())
-        return cur.fetchall()
+        output = cur.fetchall()
+        cur.close()
+        return output
 

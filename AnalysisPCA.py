@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
 from helpers.helpers import open_query
 import math
 import numpy as np
@@ -133,26 +134,30 @@ SKA_LIST = [
 def main():
     ska_list = open_query("SkillsKnowledgeAbilities")
 
-    data_list = pd.DataFrame([item[1:] for item in ska_list])
+    data_list = pd.DataFrame([item[3:] for item in ska_list])
 
-    # var_df = pd.DataFrame(data_list)
-    # result_columns = var_df.columns.values
-    #
-    # for column in result_columns:
-    #     var_df[column] = var_df[column].astype("float")
-    #     print SKA_LIST[column], "|", math.sqrt(var_df[column].var())
+    #STANDARD SCALE
+    data_list_std = StandardScaler().fit_transform(data_list)
 
-    component_limit = 10
+    std_df = pd.DataFrame(data_list_std, columns=SKA_LIST, index=[(item[:3]) for item in ska_list])
+    std_df.to_csv("PCA_Standardized.csv")
 
-    pca = PCA(n_components=component_limit)
-    pca.fit(data_list)
+    cov_mat = np.cov(data_list_std.T)
+    eig_vals, eig_vecs = np.linalg.eig(cov_mat)
 
-    identity = np.identity(data_list.shape[1])
-
-    print pca.explained_variance_ratio_
+    eig_pairs = [(np.abs(eig_vals[i]), eig_vecs[:, i]) for i in range(len(eig_vals))]
+    print('Eigenvalues in descending order:')
+    for i in eig_pairs:
+        print(i[0])
     print ""
 
-    coef = pca.transform(identity)
+    pca_std = PCA(n_components=25)
+    pca_std.fit_transform(data_list_std)
+    for entry in pca_std.explained_variance_ratio_:
+        print entry
+
+    identity = np.identity(data_list.shape[1])
+    coef = pca_std.transform(identity)
 
     coef_df = pd.DataFrame(coef, columns=['PC_1',
                                           'PC_2',
@@ -163,23 +168,29 @@ def main():
                                           'PC_7',
                                           'PC_8',
                                           'PC_9',
-                                          'PC_10'], index=SKA_LIST)
-
-    coef_df['PC_1'] = coef_df['PC_1'].abs()
-    coef_df['PC_2'] = coef_df['PC_2'].abs()
-    coef_df['PC_3'] = coef_df['PC_3'].abs()
-    coef_df['PC_4'] = coef_df['PC_4'].abs()
-    coef_df['PC_5'] = coef_df['PC_5'].abs()
-    coef_df['PC_6'] = coef_df['PC_6'].abs()
-    coef_df['PC_7'] = coef_df['PC_7'].abs()
-    coef_df['PC_8'] = coef_df['PC_8'].abs()
-    coef_df['PC_9'] = coef_df['PC_9'].abs()
-    coef_df['PC_10'] = coef_df['PC_10'].abs()
-
+                                          'PC_10',
+                                          'PC_11',
+                                          'PC_12',
+                                          'PC_13',
+                                          'PC_14',
+                                          'PC_15',
+                                          'PC_16',
+                                          'PC_17',
+                                          'PC_18',
+                                          'PC_19',
+                                          'PC_20',
+                                          'PC_21',
+                                          'PC_22',
+                                          'PC_23',
+                                          'PC_24',
+                                          'PC_25'
+                                          ], index=SKA_LIST)
     print coef_df
     coef_df.to_csv("SKA_PCA.csv")
 
-    #TODO TRY LINKED CORRELATION MATRIX METHOD, WITH THRESHOLD OF 0.70
+    #TODO DOT PRODUCT FOR COMPONENTS FOR EACH PROFESSION
+
+
 
 
 if __name__ == "__main__":
