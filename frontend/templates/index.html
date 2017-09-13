@@ -1,38 +1,45 @@
 <html>
 	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-	<link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.green-teal.min.css">
+	<link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.blue_grey-light_green.min.css" />
+	<link rel="stylesheet" href="static/style.css">
 	<script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
 
 
+	<head>
+		<title>Uconomy</title>
+		<meta name="viewport" content="initial-scale=1.0">
+		<meta charset="utf-8">
+	</head>
 
-	<!-- Uses a header that scrolls with the text, rather than staying
-	  locked at the top -->
-	<div class="mdl-layout mdl-js-layout">
-	  <header class="mdl-layout__header mdl-layout__header--scroll">
-	    <div class="mdl-layout__header-row">
-	      <!-- Title -->
-	      <span class="mdl-layout-title" style="color:white">Uconomy</span>
-	      <!-- Add spacer, to align navigation to the right -->
-	      <div class="mdl-layout-spacer"></div>
-	      <!-- Navigation -->
-	      <nav class="mdl-navigation">
-		<a class="mdl-navigation__link" style="color:white" href="">Home</a>
-		<a class="mdl-navigation__link" style="color:white" href="">Location</a>
-		<a class="mdl-navigation__link" style="color:white" href="">Potato</a>
-	      </nav>
-	    </div>
-	  </header>
-	  <div class="mdl-layout__drawer">
-	    <span class="mdl-layout-title">Uconomy</span>
-	    <nav class="mdl-navigation">
-	      <a class="mdl-navigation__link" href="">Home</a>
-	      <a class="mdl-navigation__link" href="">Location</a>
-	      <a class="mdl-navigation__link" href="">Potato</a>
-	    </nav>
-	  </div>
-	  <main class="mdl-layout__content">
-	    <div class="page-content"><!-- Your content goes here --></div>
-	  </main>
-	</div>
+	<body>
+		<div id="mySidenav" class="sidenav">
+			  <h2 style="color:white"> <i class="material-icons md-72">menu</i> Uconomy</h2>
+			  <a href="#"><i class="material-icons">home</i> Home</a>
+			  <a href="#"><i class="material-icons">place</i> Location</a>
+			  <h4 style="color:white"> Recommendations</h4>
+			  <a href="#">Disciplines</a>
+			  <a href="#">Jobs</a>
+			  <a href="#">Industries</a>
+			  <h4 style="color:white"> Preferences</h4>
+			  <a href="#">Activities</a>
+			  <a href="#">Interests</a>
+			  <a href="#">Skills</a>
+			  <a href="#">Personality</a>
+			  <a href="#">Risks</a>
+			</div>
 
+			<div id="map"></div>
+			<script>
+			var map;
+			function initMap() {
+			map = new google.maps.Map(document.getElementById('map'), {
+			  center: {lat: -34.397, lng: 150.644},
+			  zoom: 8
+			});
+			}
+			</script>
+			<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyABaET0rQB1_zCkdUuNQx8nFMKgIjTteNU&callback=initMap"
+			async defer></script>
+		</div>
+	</body>
 </html>
