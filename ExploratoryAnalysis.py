@@ -188,8 +188,12 @@ def main():
     print coef_df
     coef_df.to_csv("SKA_PCA.csv")
 
-    #TODO DOT PRODUCT FOR COMPONENTS FOR EACH PROFESSION
+    #TODO CORRELATION MATRIX
 
+    dot_product = std_df.dot(coef_df)
+    print dot_product
+
+    dot_product.to_csv("PC_by_job.csv")
 
 
 
