@@ -40,3 +40,12 @@ INTERESTS_QUESTIONS = [
     "I am very conscientious and interested in keeping things stable and orderly"
 ]
 
+SKA_QUESTIONS = [
+    "I am very good at critical thinking",
+    "I am very service-oriented",
+    "I am very good at math and science",
+    "I have strong organizational skills",
+    "I have strong situational awareness",
+    "I am very knowledgeable",
+    "I have a keen aesthetic sense"
+]

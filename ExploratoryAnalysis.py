@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 from sklearn.decomposition import PCA
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from helpers.helpers import open_query
 import math
 import numpy as np
@@ -188,13 +188,21 @@ def main():
     print coef_df
     coef_df.to_csv("SKA_PCA.csv")
 
+    #TODO ADD THE TRANSFORMATIONS TO THE PROTOTYPE - USE AT LEAST FIRST 8 PRINCIPLE COMPONENTS OR SO
+
     #TODO CORRELATION MATRIX
 
     dot_product = std_df.dot(coef_df)
-    print dot_product
 
-    dot_product.to_csv("PC_by_job.csv")
+    # normalized_dot_product = Normalizer().fit_transform(dot_product)
+    # normalized_dot_product = normalize(axis=0).fit_transform(dot_product)
+    normalized_dot_product = MinMaxScaler().fit_transform(dot_product)
 
+    normalized_dot_product = pd.DataFrame(normalized_dot_product, columns=list(dot_product), index=dot_product.index)
+
+    print normalized_dot_product
+
+    normalized_dot_product.to_csv("PC_by_job.csv")
 
 
 if __name__ == "__main__":

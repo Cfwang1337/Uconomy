@@ -2,7 +2,10 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 from helpers.helpers import open_query
-from questions.questions import START_TIME, INPUT_TEXT, WORK_ACTIVITIES_QUESTIONS, INTERESTS_QUESTIONS
+from questions.questions import START_TIME, INPUT_TEXT, WORK_ACTIVITIES_QUESTIONS, INTERESTS_QUESTIONS, SKA_QUESTIONS
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
+import numpy as np
 import pandas as pd
 
 
@@ -19,11 +22,11 @@ def questionnaire(questions):
     return user_responses
 
 
-def scoring(query, questions):
+def scoring(comparisons, questions):
     all_occupation_rankings = []
 
     user_responses = questionnaire(questions)
-    comparisons = open_query(query)
+    # comparisons = open_query(query)
 
     for occupation in comparisons:
         ranking = 0
@@ -42,6 +45,38 @@ def scoring(query, questions):
         all_occupation_rankings.append([occupation[0], occupation[1], ranking])
 
     return all_occupation_rankings
+
+
+def ska_transform():
+    ska_list = open_query("SkillsKnowledgeAbilities")
+
+    data_list = pd.DataFrame([item[3:] for item in ska_list])
+
+    data_list_std = StandardScaler().fit_transform(data_list)
+
+    std_df = pd.DataFrame(data_list_std, index=[(item[:3]) for item in ska_list])
+
+    pca_std = PCA(n_components=7)
+    pca_std.fit_transform(data_list_std)
+
+    identity = np.identity(data_list.shape[1])
+    coef = pca_std.transform(identity)
+
+    coef_df = pd.DataFrame(coef, columns=['Critical Thinking',
+                                          'Service Orientation',
+                                          'STEM',
+                                          'Organizational Skill',
+                                          'Situational Awareness',
+                                          'General Knowledge',
+                                          'Aesthetic Sense',
+                                          ])
+
+    dot_product = std_df.dot(coef_df)
+    normalized_dot_product = MinMaxScaler().fit_transform(dot_product)
+    multi_index = pd.MultiIndex.from_tuples([(item[:3]) for item in ska_list], names=["onetsoc_code", "title",                                                                                      "description"])
+    normalized_dot_product = pd.DataFrame(normalized_dot_product, columns=list(dot_product), index=multi_index)
+
+    return normalized_dot_product.reset_index().values.tolist()
 
 
 def make_choice():
@@ -81,19 +116,27 @@ def main():
     choice = make_choice()
     while str(choice).lower() != "q" and choice not in choices_made:
         if choice == "0":
-            results = scoring("WorkActivities", WORK_ACTIVITIES_QUESTIONS)
+            comparisons = open_query("WorkActivities")
+            results = scoring(comparisons, WORK_ACTIVITIES_QUESTIONS)
             results_df = make_or_append_df(results_df, results, "WorkActivities")
 
             choices_made.append(choice)
             choice = make_choice()
 
         elif choice == "1":
-            results = scoring("Interests", INTERESTS_QUESTIONS)
+            comparisons = open_query("Interests")
+            results = scoring(comparisons, INTERESTS_QUESTIONS)
             results_df = make_or_append_df(results_df, results, "Interests")
 
             choices_made.append(choice)
             choice = make_choice()
+        elif choice == "2":
+            comparisons = ska_transform()
+            results = scoring(comparisons, SKA_QUESTIONS)
+            results_df = make_or_append_df(results_df, results, "Skills")
 
+            choices_made.append(choice)
+            choice = make_choice()
         else:
             choice = make_choice()
 
