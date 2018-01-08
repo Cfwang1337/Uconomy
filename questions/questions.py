@@ -47,5 +47,5 @@ SKA_QUESTIONS = [
     "I have strong organizational skills",
     "I have strong situational awareness",
     "I am very knowledgeable",
-    "I have a keen aesthetic sense"
+    "I have a good appreciation for art"
 ]

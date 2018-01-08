@@ -105,6 +105,7 @@ def make_or_append_df(reference_df, results, column_name):
     return reference_df
 
 
+#TODO NEED TO BE ABLE TO FILTER BY LEVEL OF EDUCATION
 #TODO NEED TO REFACTOR SQL TO MAKE QUESTIONS MORE GRANULAR
 #TODO NEED TO ACQUIRE OES AND COMPENSATION DATA
 #TODO NEED CENSUS DATA SHOWING CROSSWALK OF MAJORS AND OCCUPATIONS
@@ -152,7 +153,7 @@ def main():
 
         full_results = results_df.sort_values(['rank_score'], ascending=0)
 
-        print full_results[:25]
+        print full_results[:25].to_string()
 
         full_results.to_csv("results/{0}.csv".format(datetime.now().isoformat()))
 
