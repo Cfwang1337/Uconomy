@@ -3,17 +3,20 @@ from datetime import datetime
 START_TIME = datetime.now().time().isoformat()
 
 INPUT_TEXT = """
-Find occupational recommendations based on the following:
+Find job recommendations based on the following:
 0. Activities I Like
 1. My Interests
 2. My Skills, Knowledge, and Ability
-3. My Personality and Values
-4. Risks and Dangers I'm Willing To Accept
-5. My Degree
-6. My County, City, State, or Region
+3. Industries I'm Interested In
+4. Am I Going to College Right After High School?
 
 "Q" to tabulate results and exit
 """
+# 3. My Personality and Values
+# 4. Risks and Dangers I'm Willing To Accept
+# 5. My Degree
+# 6. My County, City, State, or Region
+
 
 WORK_ACTIVITIES_QUESTIONS = [
     "I want to do something physically demanding",
