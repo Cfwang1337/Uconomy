@@ -99,7 +99,26 @@ def choose_industry():
         indices.append(int(industry_index))
         industry_index = raw_input()
 
-    return str(tuple(list(set([INDUSTRIES[industry_index] for industry_index in indices]))))
+    if len(indices) > 1:
+        return str(tuple(list(set([INDUSTRIES[industry_index] for industry_index in indices]))))
+    else:
+        return "('{0}')".format(INDUSTRIES[indices[0]])
+
+
+def choose_education():
+    print "Do you plan to go to a four-year college?"
+    college_choice = raw_input("Y/N")
+    while college_choice.lower().strip()[0] not in ["y", "n"]:
+        print "Please make a valid choice"
+        college_choice = raw_input("Y/N")
+
+    comparisons = open_query("Education")
+
+    if college_choice.lower().strip() == "y":
+        return [(item[0], item[1], 500) if item[2] == "College" else (item[0], item[1], 50) for item in comparisons]
+
+    elif college_choice.lower().strip() == "n":
+        return [(item[0], item[1], 50) if item[2] == "College" else (item[0], item[1], 500) for item in comparisons]
 
 
 def make_choice():
@@ -128,9 +147,9 @@ def make_or_append_df(reference_df, results, column_name):
     return reference_df
 
 
+#TODO NEED TO ADD COMPENSATION DATA
 #TODO NEED TO BE ABLE TO FILTER BY LEVEL OF EDUCATION
 #TODO NEED TO REFACTOR SQL TO MAKE QUESTIONS MORE GRANULAR
-#TODO NEED TO ACQUIRE OES AND COMPENSATION DATA
 #TODO NEED CENSUS DATA SHOWING CROSSWALK OF MAJORS AND OCCUPATIONS
 def main():
 
@@ -157,10 +176,15 @@ def main():
             results_df = make_or_append_df(results_df, results, "Skills")
             choices_made.append(choice)
             choice = make_choice()
-        #TODO LATER - SUPPORT MULTIPLE INDUSTRY CHOICES
         elif choice == "3":
             results = industry_transform()
             results_df = make_or_append_df(results_df, results, "Industry")
+            choices_made.append(choice)
+            choice = make_choice()
+        #TODO MAKE THIS MORE GRANULAR THAN COLLEGE/NO COLLEGE
+        elif choice == "4":
+            results = choose_education()
+            results_df = make_or_append_df(results_df, results, "Education")
             choices_made.append(choice)
             choice = make_choice()
         else:
