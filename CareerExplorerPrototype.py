@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 from datetime import datetime
-from helpers.helpers import open_query
+from helpers.helpers import open_query, open_query_format
 from questions.questions import START_TIME, INPUT_TEXT, WORK_ACTIVITIES_QUESTIONS, INTERESTS_QUESTIONS, SKA_QUESTIONS
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
@@ -26,7 +26,6 @@ def scoring(comparisons, questions):
     all_occupation_rankings = []
 
     user_responses = questionnaire(questions)
-    # comparisons = open_query(query)
 
     for occupation in comparisons:
         ranking = 0
@@ -79,6 +78,72 @@ def ska_transform():
     return normalized_dot_product.reset_index().values.tolist()
 
 
+def industry_transform():
+
+    industry_choice = choose_industry()
+    print industry_choice
+    industry_list = open_query_format("Industry", industry_choice)
+    return [[item[0], item[1], item[2]] for item in industry_list]
+
+
+def choose_industry():
+    industries = [
+        ('0', 'Accommodation and food services'),
+        ('1', 'Administrative and support and waste management and remediation services'),
+        ('2', 'Agriculture'),
+        ('3', 'Arts'),
+        ('4', 'Construction'),
+        ('5', 'Education services'),
+        ('6', 'Finance and insurance'),
+        ('7', 'Health care and social assistance'),
+        ('8', 'Information'),
+        ('9', 'Management of Companies and Enterprises'),
+        ('10', 'Manufacturing'),
+        ('11', 'Mining'),
+        ('12', 'Other services'),
+        ('13', 'Professional'),
+        ('14', 'Public administration'),
+        ('15', 'Real estate and rental and leasing'),
+        ('16', 'Retail trade'),
+        ('17', 'Transportation and warehousing'),
+        ('18', 'Utilities'),
+        ('19', 'Wholesale trade'),
+    ]
+
+    print """
+CHOOSE AN INDUSTRY
+    0. Accommodation and food services
+    1. Administrative and support and waste management and remediation services
+    2. Agriculture, forestry, fishing and hunting
+    3. Arts, entertainment, and recreation
+    4. Construction
+    5. Education services
+    6. Finance and insurance
+    7. Health care and social assistance
+    8. Information
+    9. Management of Companies and Enterprises
+    10. Manufacturing
+    11. Mining
+    12. Other services, except public administration
+    13. Professional, Scientific and Technical Services
+    14. Public administration
+    15. Real estate and rental and leasing
+    16. Retail trade
+    17. Transportation and warehousing
+    18. Utilities
+    19. Wholesale trade
+    """
+
+    while True:
+        try:
+            industry_index = int(raw_input())
+            break
+        except:
+            print "PLEASE CHOOSE A VALID VALUE"
+
+    return industries[int(industry_index)][1]
+
+
 def make_choice():
     choice = raw_input(INPUT_TEXT)
 
@@ -120,22 +185,24 @@ def main():
             comparisons = open_query("WorkActivities")
             results = scoring(comparisons, WORK_ACTIVITIES_QUESTIONS)
             results_df = make_or_append_df(results_df, results, "WorkActivities")
-
             choices_made.append(choice)
             choice = make_choice()
-
         elif choice == "1":
             comparisons = open_query("Interests")
             results = scoring(comparisons, INTERESTS_QUESTIONS)
             results_df = make_or_append_df(results_df, results, "Interests")
-
             choices_made.append(choice)
             choice = make_choice()
         elif choice == "2":
             comparisons = ska_transform()
             results = scoring(comparisons, SKA_QUESTIONS)
             results_df = make_or_append_df(results_df, results, "Skills")
-
+            choices_made.append(choice)
+            choice = make_choice()
+        #TODO LATER - SUPPORT MULTIPLE INDUSTRY CHOICES
+        elif choice == "3":
+            results = industry_transform()
+            results_df = make_or_append_df(results_df, results, "Industry")
             choices_made.append(choice)
             choice = make_choice()
         else:

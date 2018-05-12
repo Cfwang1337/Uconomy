@@ -16,3 +16,12 @@ def open_query(query):
         cur.close()
         return output
 
+
+def open_query_format(query, query_filter):
+    with open("queries/{0}.sql".format(query), 'rb') as query:
+        filtered_query = query.read().format(query_filter)
+        cur = connect_with_onet()
+        cur.execute(filtered_query)
+        output = cur.fetchall()
+        cur.close()
+        return output
