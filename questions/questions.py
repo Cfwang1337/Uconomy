@@ -52,3 +52,50 @@ SKA_QUESTIONS = [
     "I am very knowledgeable",
     "I have a good appreciation for art"
 ]
+
+INDUSTRY_QUESTIONS = """
+CHOOSE AN INDUSTRY
+    0. Accommodation and food services
+    1. Administrative and support and waste management and remediation services
+    2. Agriculture, forestry, fishing and hunting
+    3. Arts, entertainment, and recreation
+    4. Construction
+    5. Education services
+    6. Finance and insurance
+    7. Health care and social assistance
+    8. Information
+    9. Management of Companies and Enterprises
+    10. Manufacturing
+    11. Mining
+    12. Other services, except public administration
+    13. Professional, Scientific and Technical Services
+    14. Public administration
+    15. Real estate and rental and leasing
+    16. Retail trade
+    17. Transportation and warehousing
+    18. Utilities
+    19. Wholesale trade
+    """
+
+INDUSTRIES = [
+        'Accommodation and food services',
+        'Administrative and support and waste management and remediation services',
+        'Agriculture',
+        'Arts',
+        'Construction',
+        'Education services',
+        'Finance and insurance',
+        'Health care and social assistance',
+        'Information',
+        'Management of Companies and Enterprises',
+        'Manufacturing',
+        'Mining',
+        'Other services',
+        'Professional',
+        'Public administration',
+        'Real estate and rental and leasing',
+        'Retail trade',
+        'Transportation and warehousing',
+        'Utilities',
+        'Wholesale trade',
+    ]

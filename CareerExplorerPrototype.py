@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 from helpers.helpers import open_query, open_query_format
-from questions.questions import START_TIME, INPUT_TEXT, WORK_ACTIVITIES_QUESTIONS, INTERESTS_QUESTIONS, SKA_QUESTIONS
+from questions.questions import START_TIME, INPUT_TEXT, WORK_ACTIVITIES_QUESTIONS, INTERESTS_QUESTIONS, SKA_QUESTIONS, \
+    INDUSTRY_QUESTIONS, INDUSTRIES
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 import numpy as np
@@ -87,61 +88,18 @@ def industry_transform():
 
 
 def choose_industry():
-    industries = [
-        ('0', 'Accommodation and food services'),
-        ('1', 'Administrative and support and waste management and remediation services'),
-        ('2', 'Agriculture'),
-        ('3', 'Arts'),
-        ('4', 'Construction'),
-        ('5', 'Education services'),
-        ('6', 'Finance and insurance'),
-        ('7', 'Health care and social assistance'),
-        ('8', 'Information'),
-        ('9', 'Management of Companies and Enterprises'),
-        ('10', 'Manufacturing'),
-        ('11', 'Mining'),
-        ('12', 'Other services'),
-        ('13', 'Professional'),
-        ('14', 'Public administration'),
-        ('15', 'Real estate and rental and leasing'),
-        ('16', 'Retail trade'),
-        ('17', 'Transportation and warehousing'),
-        ('18', 'Utilities'),
-        ('19', 'Wholesale trade'),
-    ]
 
-    print """
-CHOOSE AN INDUSTRY
-    0. Accommodation and food services
-    1. Administrative and support and waste management and remediation services
-    2. Agriculture, forestry, fishing and hunting
-    3. Arts, entertainment, and recreation
-    4. Construction
-    5. Education services
-    6. Finance and insurance
-    7. Health care and social assistance
-    8. Information
-    9. Management of Companies and Enterprises
-    10. Manufacturing
-    11. Mining
-    12. Other services, except public administration
-    13. Professional, Scientific and Technical Services
-    14. Public administration
-    15. Real estate and rental and leasing
-    16. Retail trade
-    17. Transportation and warehousing
-    18. Utilities
-    19. Wholesale trade
-    """
+    print INDUSTRY_QUESTIONS
 
-    while True:
-        try:
-            industry_index = int(raw_input())
-            break
-        except:
-            print "PLEASE CHOOSE A VALID VALUE"
+    print "PLEASE CHOOSE VALID VALUES UNDER 20. TYPE Q TO EXIT"
+    industry_index = raw_input()
 
-    return industries[int(industry_index)][1]
+    indices = []
+    while industry_index.lower() != "q" and industry_index in [str(x) for x in range(0, 20)]:
+        indices.append(int(industry_index))
+        industry_index = raw_input()
+
+    return str(tuple(list(set([INDUSTRIES[industry_index] for industry_index in indices]))))
 
 
 def make_choice():

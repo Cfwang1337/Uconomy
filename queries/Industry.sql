@@ -23,10 +23,17 @@ occupation_level_metadata
 LEFT JOIN occupations ON occupations.onetsoc_code = occupation_level_metadata.onetsoc_code
 WHERE item = 'NAICS Sector'
 AND percent > 0
-AND response = '{0}'
+AND response in {0}
   )
 
-SELECT * FROM with_rank
-ORDER BY percent desc
+SELECT
+onetsoc_code,
+title,
+SUM(score) as score
+FROM with_rank
+GROUP BY onetsoc_code, title
+ORDER BY SUM(score) DESC
+
+
 
 
